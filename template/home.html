@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<title>Mimimo Pass</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<body>
+
+    <header class="w3-container w3-theme">
+        <h1>Mimimo Pass</h1>
+    </header>
+
+    <div class="w3-container w3-margin-top">
+        <table class="w3-table-all w3-hoverable">
+
+            {{range $i, $a := .Apps}}
+            <tr style="height:60px">
+                <p>
+                    <form method="post" action="/">
+
+                        <td class="w3-col" style="width:150px">
+                            <label>
+                                <i class="fa fa-angle-double-right w3-text-theme"></i>
+                                {{$a.AppName}}
+                            </label>
+                        </td>
+
+                        <td class="w3-col" style="width:80px">
+                            <a href="/?delete={{$a.AppName}}">
+                                <i class="fa fa-trash w3-text-theme"></i>
+                            </a>
+                        </td>
+
+                        <td class="w3-col" style="width:80px">
+                            <div onclick="document.getElementById('inputPassPhrase_{{$a.AppName}}').style.display='block'">
+                                <i class="fa fa-key w3-text-theme"></i>
+                            </div>
+                        </td>
+
+                        <td class="w3-rest w3-left">
+                            <div id="inputPassPhrase_{{$a.AppName}}" style="display:none" class="w3-cell-row">
+                                <div class="w3-cell w3-cell-middle">
+                                    <input name="passphrase" class="w3-input w3-border w3-round" type="password"
+                                        placeholder="Enter passphrase">
+                                </div>
+                                <div class="w3-cell w3-cell-middle">
+                                    <button class="w3-button" type="submit">
+                                        <i class="fa fa-check w3-text-theme"></i>
+                                    </button>
+                                </div>
+                                <div class="w3-cell w3-cell-middle" onclick="document.getElementById('inputPassPhrase_{{$a.AppName}}').style.display='none'">
+                                    <i class="fa fa-remove w3-text-theme"></i>
+                                </div>
+                            </div>
+                            {{ if eq $a.AppName $.SelectedApp }}
+                            <div class="w3-cell-row">
+                                <input id="pass" value="{{$.Pass}}" type="password" style="padding:8px" class="w3-input w3-border w3-round w3-cell w3-cell-middle"
+                                    readonly />
+                                <div class="w3-cell w3-cell-middle" onclick="document.getElementById('pass').type='text';document.getElementById('pass_hide').style.display='block';document.getElementById('pass_view').style.display='none'">
+                                    <i id="pass_view" class="fa fa-eye w3-text-theme" style="padding:8px"></i>
+                                </div>
+                                <div class="w3-cell w3-cell-middle" onclick="document.getElementById('pass').type='password';document.getElementById('pass_view').style.display='block';document.getElementById('pass_hide').style.display='none'">
+                                    <i id="pass_hide" class="fa fa-eye-slash w3-text-theme" style="display:none;padding:8px"></i>
+                                </div>
+                                <div class="w3-cell w3-cell-middle" style="padding:8px">
+                                    <i class="fa fa-clipboard w3-text-theme" onclick="let initial_state=document.getElementById('pass').type;document.getElementById('pass').type='text';document.getElementById('pass').select();document.execCommand('copy');document.getElementById('pass').type=initial_state;"></i>
+                                </div>
+                            </div>
+                            {{ end }}
+                        </td>
+
+                        <td>
+                            <input name="app" value="{{$a.AppName}}" type="hidden" />
+                        </td>
+
+                    </form>
+                </p>
+            </tr>
+
+            {{ end }}
+        </table>
+
+        <p>
+            <div onclick="document.getElementById('modalNewApp').style.display='block'">
+                <i class="fa fa-plus w3-text-theme"></i>
+                Add new app
+            </div>
+        </p>
+    </div>
+
+    {{template "modalNewApp.html"}}
+
+</body>
+
+</html>
