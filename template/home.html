@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="/css/w3-theme-blue-grey.css">
 <link rel="stylesheet" href="/font-awesome/css/solid.css">
 <link rel="stylesheet" href="/font-awesome/css/fontawesome.css">
+<script src="/js/script.js"></script> 
 
 <body>
 
@@ -39,38 +40,35 @@
                         </td>
 
                         <td class="w3-col" style="width:80px">
-                            <div onclick="document.getElementById('inputPassPhrase_{{$a.AppName}}').style.display='block'">
+                            <div onclick="ViewOrHide(document.getElementById('pass_{{$a.AppName}}'))">
                                 <i class="fas fa-key w3-text-theme"></i>
                             </div>
                         </td>
 
                         <td class="w3-rest w3-left">
-                            <div id="inputPassPhrase_{{$a.AppName}}" style="display:none" class="w3-cell-row">
+                            {{ if eq $a.AppName $.SelectedApp }}
+                            <div id="pass_{{$a.AppName}}" class="w3-cell-row">
+                                <input id="pass" value="{{$.Pass}}" type="text" class="w3-input w3-border w3-round w3-cell w3-cell-middle"
+                                    readonly />
+                                <div class="w3-cell w3-cell-middle w3-padding-small">
+                                    <div onclick="ViewOrHidePass()">
+                                        <i id="viewIcon" class="fas fa-eye-slash w3-text-theme"></i>
+                                    </div>
+                                </div>
+                                <div class="w3-cell w3-cell-middle w3-padding-small">
+                                    <i class="fas fa-clipboard w3-text-theme" onclick="copy()"></i>
+                                </div>
+                            </div>
+                            {{ else }}
+                            <div id="pass_{{$a.AppName}}" style="display:none" class="w3-cell-row">
                                 <div class="w3-cell w3-cell-middle">
                                     <input name="passphrase" class="w3-input w3-border w3-round" type="password"
                                         placeholder="Enter passphrase">
                                 </div>
-                                <div class="w3-cell w3-cell-middle  w3-padding">
-                                        <div onclick="document.getElementById('form_{{$a.AppName}}').submit()">
-                                            <i class="fas fa-check w3-text-theme"></i>
-                                        </div>
-                                </div>
-                                <div class="w3-cell w3-cell-middle w3-padding" onclick="document.getElementById('inputPassPhrase_{{$a.AppName}}').style.display='none'">
-                                    <i class="fas fa-times w3-text-theme"></i>
-                                </div>
-                            </div>
-                            {{ if eq $a.AppName $.SelectedApp }}
-                            <div class="w3-cell-row">
-                                <input id="pass" value="{{$.Pass}}" type="password" style="padding:8px" class="w3-input w3-border w3-round w3-cell w3-cell-middle"
-                                    readonly />
-                                <div class="w3-cell w3-cell-middle" onclick="document.getElementById('pass').type='text';document.getElementById('pass_hide').style.display='block';document.getElementById('pass_view').style.display='none'">
-                                    <i id="pass_view" class="fas fa-eye w3-text-theme" style="padding:8px"></i>
-                                </div>
-                                <div class="w3-cell w3-cell-middle" onclick="document.getElementById('pass').type='password';document.getElementById('pass_view').style.display='block';document.getElementById('pass_hide').style.display='none'">
-                                    <i id="pass_hide" class="fas fa-eye-slash w3-text-theme" style="display:none;padding:8px"></i>
-                                </div>
-                                <div class="w3-cell w3-cell-middle" style="padding:8px">
-                                    <i class="fas fa-clipboard w3-text-theme" onclick="let initial_state=document.getElementById('pass').type;document.getElementById('pass').type='text';document.getElementById('pass').select();document.execCommand('copy');document.getElementById('pass').type=initial_state;"></i>
+                                <div class="w3-cell w3-cell-middle w3-padding-small">
+                                    <div onclick="document.getElementById('form_{{$a.AppName}}').submit()">
+                                        <i class="fas fa-check w3-text-theme"></i>
+                                    </div>
                                 </div>
                             </div>
                             {{ end }}
