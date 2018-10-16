@@ -2,22 +2,22 @@ package main
 
 import (
 	"crypto/sha256"
+	"fmt"
 	"math/rand"
 	"unicode"
-	"fmt"
 )
 
 // compute returns the password corresponding to the passphrase and the app
 // This password is at least 10 chars long
 func computePassword(passphrase string, app App) (pass string) {
- 
+
 	charTable := regularCharTable
 	if app.UseSpecialChars {
-		charTable = append(charTable, specialCharsTable...) 
+		charTable = append(charTable, specialCharsTable...)
 	}
 	// Encrypt passphrase and app to get an hash
 	cryptedPassPhrase := sha256.Sum256([]byte(passphrase))
-	cryptedApp := sha256.Sum256([]byte(app.AppName+fmt.Sprint(app.Increment)))
+	cryptedApp := sha256.Sum256([]byte(app.AppName + fmt.Sprint(app.Increment)))
 	// Get an hash from previous hashes
 	// This way, it reduces risk of retrieving the passphrase from the generated password
 	finalHash := sha256.Sum256([]byte(string(cryptedPassPhrase[:]) + string(cryptedApp[:])))
@@ -42,6 +42,12 @@ func computePassword(passphrase string, app App) (pass string) {
 		pass += string(charTable[iChar])
 		i++
 	}
+
+	// TODO :
+	// Stop at iEnd in all cases
+	// If not strong, generate missing characters on a restricted table
+	// Then, permute using a determined seed (Maybe permute in all case ?)
+
 	return pass
 }
 
