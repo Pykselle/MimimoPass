@@ -26,17 +26,19 @@
                 Add new app
             </div>
         </p>
-        <ul class="w3-ul w3-theme-l4 ">
+        <ul class="w3-ul w3-theme-l4">
             {{range $i, $a := .Apps}}
-            <li class="w3-hover-theme-light w3-border w3-border-white">
-                <div onclick="ViewOrHide(document.getElementById('detail_{{$a.AppName}}'))">
-                    <label>
-                        <i class="fas fa-angle-double-right w3-text-theme"></i>
-                        {{$a.AppName}}
-                    </label>
-                </div>
+            <li class="w3-hover-theme-light w3-border w3-border-white" onclick="ViewOrHide(document.getElementById('detail_{{$a.AppName}}'))">
+                <label>
+                    <i class="fas fa-angle-double-right w3-text-theme"></i>
+                    {{$a.AppName}}
+                </label>
             </li>
+            {{ if eq $.SelectedApp $a.AppName}}
+            <li class="w3-show" id="detail_{{$a.AppName}}">
+                {{ else }}
             <li class="w3-hide" id="detail_{{$a.AppName}}">
+                {{ end }}
                 <form id="form_{{$a.AppName}}" method="post" action="/">
                     <input name="app" value="{{$a.AppName}}" type="hidden" />
                     <ul class="w3-ul w3-hoverable w3-white">
@@ -66,12 +68,6 @@
             </table>
             {{ end }}
         </ul>
-        <p>
-            <div onclick="document.getElementById('modalNewApp').style.display='block'">
-                <i class="fa fa-plus-square w3-text-theme"></i>
-                Add new app
-            </div>
-        </p>
     </div>
 
     {{template "modalNewApp.html"}}
