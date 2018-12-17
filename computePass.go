@@ -7,67 +7,131 @@ import (
 	"unicode"
 )
 
+type charType uint8
+
+const (
+	lowerCase = charType(iota)
+	upperCase
+	digit
+	specialChar
+)
+
 // compute returns the password corresponding to the passphrase and the app
 // This password is at least 10 chars long
 func computePassword(passphrase string, app App) (pass string) {
 
-	charTable := regularCharTable
-	if app.UseSpecialChars {
-		charTable = append(charTable, specialCharsTable...)
-	}
-	// Encrypt passphrase and app to get an hash
-	cryptedPassPhrase := sha256.Sum256([]byte(passphrase))
-	cryptedApp := sha256.Sum256([]byte(app.AppName + fmt.Sprint(app.Increment)))
-	// Get an hash from previous hashes
-	// This way, it reduces risk of retrieving the passphrase from the generated password
-	finalHash := sha256.Sum256([]byte(string(cryptedPassPhrase[:]) + string(cryptedApp[:])))
+	charTable := buildCharTable(passphrase, app)
+	hash := buildHash(passphrase, app)
 	// Compute the length of the password
 	// The password is at least 10 to 15 chars long
 	iEnd := minPassLength + len(app.AppName)%(maxPassLength-minPassLength+1)
-	// Use a randomized indices table
-	// This prevents from characters having more occurences than others
-	rand.Seed(int64(len(passphrase) + len(app.AppName)))
-	randIndexTable := rand.Perm(len(charTable))
-
 	// As long as we do not have enough characters, or as long as we do not have
 	// a strong password, we continue to add chars to the password
-	for i := 0; i < iEnd || !isStrong(pass, app.UseSpecialChars) && i < len(finalHash); {
+	for i := 0; i < iEnd; {
 		// Compute the index that will be used for the charTable
 		// For each byte of finalHash, we apply a modulo using the length of
 		// charTable, to get an index fitting the size of charTable
-		// We use the randIndexTable to get the final index, because using a
-		// modulo on a number from 0 to 255, we have more chances to get some
-		// characters than other
-		iChar := randIndexTable[int(finalHash[i])%len(charTable)]
+		iChar := int(hash[i]) % len(charTable)
 		pass += string(charTable[iChar])
 		i++
 	}
-
-	// TODO :
-	// Stop at iEnd in all cases
-	// If not strong, generate missing characters on a restricted table
-	// Then, permute using a determined seed (Maybe permute in all case ?)
-
+	strong, missingCharTypes := isStrong(pass, app.UseSpecialChars)
+	if !strong {
+		i := iEnd
+		for _, missing := range missingCharTypes {
+			if i >= len(hash) {
+				// Should not happen, See later
+				fmt.Println("Unable to have a strong password", hash, pass, missingCharTypes)
+				break
+			}
+			var tableCharToUse []rune
+			switch missing {
+			case lowerCase:
+				tableCharToUse = lowCaseCharsTable
+			case upperCase:
+				tableCharToUse = upperCaseCharsTable
+			case digit:
+				tableCharToUse = digitsTable
+			case specialChar:
+				tableCharToUse = specialCharsTable
+			}
+			iChar := int(hash[i]) % len(tableCharToUse)
+			pass += string(tableCharToUse[iChar])
+			i++
+		}
+	}
 	return pass
 }
 
+// buildCharTable returns the table of characters to use for the password
+// The password being build with a modulo on the table, some characters may be
+// repeated more than others
+// We don't want a predictible repetition, hence the table is randomized with a
+// seed depending on the length of the passphrase + app name
+func buildCharTable(passphrase string, app App) []rune {
+	var tmpCharTable []rune
+	tmpCharTable = append(tmpCharTable, lowCaseCharsTable...)
+	tmpCharTable = append(tmpCharTable, upperCaseCharsTable...)
+	tmpCharTable = append(tmpCharTable, digitsTable...)
+	if app.UseSpecialChars {
+		tmpCharTable = append(tmpCharTable, specialCharsTable...)
+	}
+	r := rand.New(rand.NewSource(int64(len(passphrase) + len(app.AppName))))
+	return shuffleCharTable(tmpCharTable, r)
+}
+
+func shuffleCharTable(vals []rune, r *rand.Rand) []rune {
+	ret := make([]rune, len(vals))
+	perm := r.Perm(len(vals))
+	for i, randIndex := range perm {
+		ret[i] = vals[randIndex]
+	}
+	return ret
+}
+
+// buildHash returns a hash built from the passphrase and the app
+
+func buildHash(passphrase string, app App) (hash [32]byte) {
+	cryptedPassPhrase := sha256.Sum256([]byte(passphrase))
+	cryptedApp := sha256.Sum256([]byte(app.AppName + fmt.Sprint(app.Increment)))
+	// Get an hash from previous hashes
+	// I hope that this way, chances to retrieve the passphrase from a
+	// generated password are negligible
+	hash = sha256.Sum256([]byte(string(cryptedPassPhrase[:]) + string(cryptedApp[:])))
+	return
+}
+
 // isStrong returns true if the password has at least one lowercase, one
-// uppercase, one digit, and one special character
-func isStrong(pass string, useSpecial bool) bool {
+// uppercase, one digit, and one special character (if applicable)
+// If not strong, returns the types that are missing
+func isStrong(pass string, useSpecial bool) (isStrong bool, missingTypes []charType) {
 	var hasLowerCase, hasUpperCase, hasDigit, hasSpecial bool
+	if !useSpecial {
+		hasSpecial = true
+	}
 	for _, r := range pass {
 		hasDigit = hasDigit || unicode.IsDigit(r)
 		hasLowerCase = hasLowerCase || unicode.IsLower(r)
 		hasUpperCase = hasUpperCase || unicode.IsUpper(r)
-		if !useSpecial {
-			hasSpecial = true
-		}
-		hasSpecial = hasSpecial || !(unicode.IsUpper(r) || unicode.IsLower(r) || unicode.IsDigit(r))
+		hasSpecial = hasSpecial || (!unicode.IsUpper(r) && !unicode.IsLower(r) && !unicode.IsDigit(r))
 	}
-	return hasDigit && hasLowerCase && hasUpperCase && hasSpecial
+	if !hasDigit {
+		missingTypes = append(missingTypes, digit)
+	}
+	if !hasLowerCase {
+		missingTypes = append(missingTypes, lowerCase)
+	}
+	if !hasUpperCase {
+		missingTypes = append(missingTypes, upperCase)
+	}
+	if useSpecial && !hasSpecial {
+		missingTypes = append(missingTypes, specialChar)
+	}
+	isStrong = hasDigit && hasLowerCase && hasUpperCase && hasSpecial
+	return
 }
 
-var regularCharTable = []rune{
+var lowCaseCharsTable = []rune{
 	'a',
 	'b',
 	'c',
@@ -94,6 +158,9 @@ var regularCharTable = []rune{
 	'x',
 	'y',
 	'z',
+}
+
+var upperCaseCharsTable = []rune{
 	'A',
 	'B',
 	'C',
@@ -120,6 +187,9 @@ var regularCharTable = []rune{
 	'X',
 	'Y',
 	'Z',
+}
+
+var digitsTable = []rune{
 	'0',
 	'1',
 	'2',
