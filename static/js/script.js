@@ -1,20 +1,8 @@
 function ViewOrHide(doc) {
-    if (doc.style.display === 'none') {
-        doc.style.display = 'table';
+    if (doc.className.indexOf("w3-show") == -1) {
+        doc.className += " w3-show";
     } else {
-        doc.style.display = 'none';
-    }
-}
-
-function ViewOrHidePass() {
-    let docPass = document.getElementById('pass')
-    let docIcon = document.getElementById('viewIcon')
-    if (docPass.type === 'text') {
-        docPass.type = 'password';
-        docIcon.className = 'fas fa-eye w3-text-theme';
-    } else {
-        docPass.type = 'text';
-        docIcon.className = 'fas fa-eye-slash w3-text-theme';
+        doc.className = doc.className.replace(" w3-show", "");
     }
 }
 

@@ -34,11 +34,11 @@ func home(w http.ResponseWriter, r *http.Request) {
 	t, err := template.New("home.html").ParseFiles(
 		tmplPath+"/home.html",
 		tmplPath+"/modalNewApp.html",
+		tmplPath+"/modalSeePass.html",
 	)
 	if err != nil {
 		log.Print("template parsing error: ", err)
 	}
-
 	if err = t.Execute(w, templateDatas); err != nil {
 		log.Print("template executing error: ", err)
 	}

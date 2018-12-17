@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="/css/w3-theme-blue-grey.css">
 <link rel="stylesheet" href="/font-awesome/css/solid.css">
 <link rel="stylesheet" href="/font-awesome/css/fontawesome.css">
-<script src="/js/script.js"></script> 
+<script src="/js/script.js"></script>
 
 <body>
 
@@ -20,71 +20,52 @@
     </header>
 
     <div class="w3-container w3-margin-top">
-        <table class="w3-table-all w3-hoverable">
-
+        <p>
+            <div onclick="document.getElementById('modalNewApp').style.display='block'">
+                <i class="fa fa-plus-square w3-text-theme"></i>
+                Add new app
+            </div>
+        </p>
+        <ul class="w3-ul w3-theme-l4 ">
             {{range $i, $a := .Apps}}
-            <tr style="height:60px" class="w3-hover-theme-light">
-                <p>
-                    <form id="form_{{$a.AppName}}" method="post" action="/">
-                        <td class="w3-col" style="width:150px">
-                            <label>
-                                <i class="fas fa-angle-double-right w3-text-theme"></i>
-                                {{$a.AppName}}
-                            </label>
-                        </td>
-
-                        <td class="w3-col" style="width:80px">
-                            <a href="/?delete={{$a.AppName}}">
-                                <i class="fas fa-trash-alt w3-text-theme"></i>
+            <li class="w3-hover-theme-light w3-border w3-border-white">
+                <div onclick="ViewOrHide(document.getElementById('detail_{{$a.AppName}}'))">
+                    <label>
+                        <i class="fas fa-angle-double-right w3-text-theme"></i>
+                        {{$a.AppName}}
+                    </label>
+                </div>
+            </li>
+            <li class="w3-hide" id="detail_{{$a.AppName}}">
+                <form id="form_{{$a.AppName}}" method="post" action="/">
+                    <input name="app" value="{{$a.AppName}}" type="hidden" />
+                    <ul class="w3-ul w3-hoverable w3-white">
+                        <li class="w3-padding-small" onclick="document.getElementById('form_{{$a.AppName}}').submit()">
+                            <a href="#" class="w3-button w3-small">
+                                <i class="fas fa-key w3-text-theme"></i> Show password
                             </a>
-                        </td>
-
-                        <td class="w3-col" style="width:80px">
-                            <div onclick="ViewOrHide(document.getElementById('pass_{{$a.AppName}}'))">
-                                <i class="fas fa-key w3-text-theme"></i>
-                            </div>
-                        </td>
-
-                        <td class="w3-rest w3-left">
-                            {{ if eq $a.AppName $.SelectedApp }}
-                            <div id="pass_{{$a.AppName}}" class="w3-cell-row">
-                                <input id="pass" value="{{$.Pass}}" type="text" class="w3-input w3-border w3-round w3-cell w3-cell-middle"
-                                    readonly />
-                                <div class="w3-cell w3-cell-middle w3-padding-small">
-                                    <div onclick="ViewOrHidePass()">
-                                        <i id="viewIcon" class="fas fa-eye-slash w3-text-theme"></i>
-                                    </div>
-                                </div>
-                                <div class="w3-cell w3-cell-middle w3-padding-small">
-                                    <i class="fas fa-clipboard w3-text-theme" onclick="copy()"></i>
-                                </div>
-                            </div>
-                            {{ else }}
-                            <div id="pass_{{$a.AppName}}" style="display:none" class="w3-cell-row">
-                                <div class="w3-cell w3-cell-middle">
-                                    <input name="passphrase" class="w3-input w3-border w3-round" type="password"
-                                        placeholder="Enter passphrase">
-                                </div>
-                                <div class="w3-cell w3-cell-middle w3-padding-small">
-                                    <div onclick="document.getElementById('form_{{$a.AppName}}').submit()">
-                                        <i class="fas fa-check w3-text-theme"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            {{ end }}
-                        </td>
-
-                        <td>
-                            <input name="app" value="{{$a.AppName}}" type="hidden" />
-                        </td>
-
-                    </form>
-                </p>
-            </tr>
-
+                        </li>
+                        <li class="w3-padding-small">
+                            <a href="/?delete={{$a.AppName}}" class="w3-button w3-small">
+                                <i class="fas fa-trash-alt w3-text-theme"></i> Delete
+                            </a>
+                        </li>
+                        <li class="w3-padding-small">
+                            <a href="#" class="w3-button w3-small">
+                                <i class="fas fa-redo-alt w3-text-theme"></i> Generate new password
+                            </a>
+                        </li>
+                        <li class="w3-padding-small">
+                            <a href="#" class="w3-button w3-small">
+                                <i class="fas fa-history w3-text-theme"></i> History
+                            </a>
+                        </li>
+                    </ul>
+                </form>
+            </li>
+            </table>
             {{ end }}
-        </table>
-
+        </ul>
         <p>
             <div onclick="document.getElementById('modalNewApp').style.display='block'">
                 <i class="fa fa-plus-square w3-text-theme"></i>
@@ -94,6 +75,7 @@
     </div>
 
     {{template "modalNewApp.html"}}
+    {{template "modalSeePass.html" .}}
 
 </body>
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/nanobox-io/golang-scribble"
 )
@@ -13,6 +14,7 @@ type App struct {
 	AppName         string
 	UseSpecialChars bool
 	Increment       int
+	Versions        []time.Time
 }
 
 // process parses the form datas sent in POST or GET and returns the datas to
@@ -49,6 +51,9 @@ func processFormDatas(r *http.Request, db *scribble.Driver) (*TmplVars, error) {
 	}
 	// Check if an app was selected
 	app, isApp := r.Form["app"]
+	if isApp {
+		templateDatas.SelectedApp = app[0]
+	}
 	passphrase, isPassphrase := r.Form["passphrase"]
 	if isApp && isPassphrase {
 		err = processSelectedApp(app[0], passphrase[0], &templateDatas, db)
@@ -77,7 +82,6 @@ func processFormDatas(r *http.Request, db *scribble.Driver) (*TmplVars, error) {
 // processSelectedApp retrieves the given app in scribble, computes the password
 // to be displayed and updates the template datas
 func processSelectedApp(appName string, passphrase string, tmplVars *TmplVars, db *scribble.Driver) error {
-	tmplVars.SelectedApp = appName
 	app := App{}
 	if err := db.Read("app", appName, &app); err != nil {
 		return fmt.Errorf("Error while getting app : %v", err)
@@ -88,7 +92,14 @@ func processSelectedApp(appName string, passphrase string, tmplVars *TmplVars, d
 
 // processAppToCreate creates the given app
 func processAppToCreate(appName string, useSpecialChars bool, db *scribble.Driver) error {
-	err := storeApp(db, App{AppName: appName, UseSpecialChars: useSpecialChars})
+	err := storeApp(
+		db,
+		App{
+			AppName:         appName,
+			UseSpecialChars: useSpecialChars,
+			Versions:        []time.Time{time.Now()},
+		},
+	)
 	if err != nil {
 		return fmt.Errorf("Error while adding new app : %v", err)
 	}
