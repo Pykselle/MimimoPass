@@ -18,10 +18,10 @@ const (
 
 // compute returns the password corresponding to the passphrase and the app
 // This password is at least 10 chars long
-func computePassword(passphrase string, app App) (pass string) {
+func computePassword(passphrase string, app App, increment int) (pass string) {
 
 	charTable := buildCharTable(passphrase, app)
-	hash := buildHash(passphrase, app)
+	hash := buildHash(passphrase, app, increment)
 	// Compute the length of the password
 	// The password is at least 10 to 15 chars long
 	iEnd := minPassLength + len(app.AppName)%(maxPassLength-minPassLength+1)
@@ -91,9 +91,9 @@ func shuffleCharTable(vals []rune, r *rand.Rand) []rune {
 
 // buildHash returns a hash built from the passphrase and the app
 
-func buildHash(passphrase string, app App) (hash [32]byte) {
+func buildHash(passphrase string, app App, increment int) (hash [32]byte) {
 	cryptedPassPhrase := sha256.Sum256([]byte(passphrase))
-	cryptedApp := sha256.Sum256([]byte(app.AppName + fmt.Sprint(app.Increment)))
+	cryptedApp := sha256.Sum256([]byte(app.AppName + fmt.Sprint(increment)))
 	// Get an hash from previous hashes
 	// I hope that this way, chances to retrieve the passphrase from a
 	// generated password are negligible

@@ -49,18 +49,20 @@ func processFormDatas(r *http.Request, db *scribble.Driver) (*TmplVars, error) {
 	if err != nil {
 		return nil, fmt.Errorf("param parsing error: %v", err)
 	}
-	// Check if an app was selected
-	app, isApp := r.Form["app"]
-	if isApp {
+	// Check if there's a password to show
+	if app, isPassAsked := r.Form["password"]; isPassAsked {
 		templateDatas.SelectedApp = app[0]
-	}
-	passphrase, isPassphrase := r.Form["passphrase"]
-	if isApp && isPassphrase {
-		err = processSelectedApp(app[0], passphrase[0], &templateDatas, db)
+		templateDatas.AppPasswordToShow, err = getApp(db, app[0])
 		if err != nil {
-			return nil, fmt.Errorf("Error while processing selected app: %v", err)
+			return nil, fmt.Errorf("Error while retrieving app: %v", err)
+		}
+		passphrase, isPassphrase := r.Form["passphrase"]
+		if isPassAsked && isPassphrase {
+			inc := len(templateDatas.AppPasswordToShow.Versions) - 1
+			templateDatas.Pass = computePassword(passphrase[0], templateDatas.AppPasswordToShow, inc)
 		}
 	}
+
 	// Check if there is a new app to create
 	if newApp, isNewApp := r.Form["newAppName"]; isNewApp {
 		_, useSpecials := r.Form["useSpecials"]
@@ -69,6 +71,7 @@ func processFormDatas(r *http.Request, db *scribble.Driver) (*TmplVars, error) {
 			return nil, fmt.Errorf("Error while processing app to create: %v", err)
 		}
 	}
+
 	// Check if there is an app to delete
 	if appToDel, isAppToDel := r.Form["delete"]; isAppToDel {
 		err = processAppToDelete(appToDel[0], db)
@@ -76,18 +79,25 @@ func processFormDatas(r *http.Request, db *scribble.Driver) (*TmplVars, error) {
 			return nil, fmt.Errorf("Error while processing app to delete: %v", err)
 		}
 	}
-	return &templateDatas, nil
-}
 
-// processSelectedApp retrieves the given app in scribble, computes the password
-// to be displayed and updates the template datas
-func processSelectedApp(appName string, passphrase string, tmplVars *TmplVars, db *scribble.Driver) error {
-	app := App{}
-	if err := db.Read("app", appName, &app); err != nil {
-		return fmt.Errorf("Error while getting app : %v", err)
+	// Check if there is an app history to display
+	if historyApp, isHistoryToShow := r.Form["history"]; isHistoryToShow {
+		templateDatas.SelectedApp = historyApp[0]
+		templateDatas.AppHistoryToShow, err = getApp(db, historyApp[0])
+		if err != nil {
+			return nil, fmt.Errorf("Error while retrieving app: %v", err)
+		}
+		passphrase, isPassphrase := r.Form["passphrase"]
+		if isPassphrase {
+			var pass, ts string
+			for i, t := range templateDatas.AppHistoryToShow.Versions {
+				pass = computePassword(passphrase[0], templateDatas.AppHistoryToShow, i)
+				ts = t.Format("02 Jan 2006 15:04")
+				templateDatas.AppHistory = append(templateDatas.AppHistory, TmplPassHistory{TS: ts, Pass: pass})
+			}
+		}
 	}
-	tmplVars.Pass = computePassword(passphrase, app)
-	return nil
+	return &templateDatas, nil
 }
 
 // processAppToCreate creates the given app

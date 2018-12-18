@@ -12,14 +12,22 @@ const (
 	maxPassLength = 15
 )
 
-// TmplVars is the base of a template variable.
+// TmplVars contains vars to be used in the web template
 type TmplVars struct {
-	Pass        string
-	Apps        []App
-	SelectedApp string
-	UseSpecial  bool
-	NewApp      string
-	AppToDelete string
+	Pass              string
+	Apps              []App
+	SelectedApp       string
+	NewApp            string
+	AppToDelete       string
+	AppHistoryToShow  App
+	AppHistory        []TmplPassHistory
+	AppPasswordToShow App
+}
+
+//TmplPassHistory contains vars to be used for the password history
+type TmplPassHistory struct {
+	TS   string
+	Pass string
 }
 
 // Home listens and serves the homepage.
@@ -29,12 +37,12 @@ func home(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Print("processing error: ", err)
 	}
-
 	// Display the page.
 	t, err := template.New("home.html").ParseFiles(
 		tmplPath+"/home.html",
 		tmplPath+"/modalNewApp.html",
 		tmplPath+"/modalSeePass.html",
+		tmplPath+"/modalHistory.html",
 	)
 	if err != nil {
 		log.Print("template parsing error: ", err)

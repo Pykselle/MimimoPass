@@ -1,0 +1,47 @@
+{{ if $.AppHistoryToShow.AppName }}
+<div id="modalHistory" class="w3-modal w3-show">
+    {{ else }}
+    <div id="modalHistory" class="w3-modal">
+        {{ end }}
+        <div class="w3-modal-content w3-card-4" style="max-width:400px">
+            <header class="w3-cell-row w3-theme">
+                <div class="w3-container w3-cell">
+                    <h5>History</h5>
+                </div>
+                <span onclick="ViewOrHide(document.getElementById('modalHistory'))" class="w3-button w3-hover-theme-light w3-large w3-cell"
+                    title="Close Modal">&times;</span>
+            </header>
+            <form class="w3-container" method="post" action="/">
+                <div class="w3-section">
+                    <input name="passphrase" class="w3-input w3-border" type="password" placeholder="Enter passphrase">
+                    <button class="w3-button w3-hover-theme-light w3-block w3-theme w3-section" type="submit">Show
+                        history</button>
+                    <input name="history" value="{{$.AppHistoryToShow.AppName}}" type="hidden" />
+                </div>
+            </form>
+            {{ if $.AppHistory }}
+            <div class="w3-container">
+                <div class="w3-section">
+                    <table class="w3-table w3-table-all">
+                        <tr>
+                            <th>Date</th>
+                            <th>Value</th>
+                        </tr>
+                        {{range $i, $a := .AppHistory}}
+                        <tr>
+                            <td>
+                                {{$a.TS}}
+                            </td>
+                            <td>
+                                {{$a.Pass}}
+
+                            </td>
+                        </tr>
+                        {{ end }}
+                    </table>
+                </div>
+
+            </div>
+            {{ end }}
+        </div>
+    </div>

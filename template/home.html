@@ -20,19 +20,15 @@
     </header>
 
     <div class="w3-container w3-margin-top">
-        <p>
-            <div onclick="document.getElementById('modalNewApp').style.display='block'">
-                <i class="fa fa-plus-square w3-text-theme"></i>
-                Add new app
-            </div>
-        </p>
+        <div class="w3-padding" onclick="ViewOrHide(document.getElementById('modalNewApp'))">
+            <i class="fas fa-plus w3-text-theme"></i>
+            New app
+        </div>
         <ul class="w3-ul w3-theme-l4">
             {{range $i, $a := .Apps}}
             <li class="w3-hover-theme-light w3-border w3-border-white" onclick="ViewOrHide(document.getElementById('detail_{{$a.AppName}}'))">
-                <label>
-                    <i class="fas fa-angle-double-right w3-text-theme"></i>
-                    {{$a.AppName}}
-                </label>
+                <i class="fas fa-angle-double-right w3-text-theme"></i>
+                {{$a.AppName}}
             </li>
             {{ if eq $.SelectedApp $a.AppName}}
             <li class="w3-show" id="detail_{{$a.AppName}}">
@@ -42,8 +38,8 @@
                 <form id="form_{{$a.AppName}}" method="post" action="/">
                     <input name="app" value="{{$a.AppName}}" type="hidden" />
                     <ul class="w3-ul w3-hoverable w3-white">
-                        <li class="w3-padding-small" onclick="document.getElementById('form_{{$a.AppName}}').submit()">
-                            <a href="#" class="w3-button w3-small">
+                        <li class="w3-padding-small">
+                            <a href="/?password={{$a.AppName}}" class="w3-button w3-small">
                                 <i class="fas fa-key w3-text-theme"></i> Show password
                             </a>
                         </li>
@@ -53,25 +49,25 @@
                             </a>
                         </li>
                         <li class="w3-padding-small">
-                            <a href="#" class="w3-button w3-small">
+                            <div class="w3-button w3-small">
                                 <i class="fas fa-redo-alt w3-text-theme"></i> Generate new password
-                            </a>
+                            </div>
                         </li>
                         <li class="w3-padding-small">
-                            <a href="#" class="w3-button w3-small">
+                            <a href="/?history={{$a.AppName}}" class="w3-button w3-small">
                                 <i class="fas fa-history w3-text-theme"></i> History
                             </a>
                         </li>
                     </ul>
                 </form>
             </li>
-            </table>
             {{ end }}
         </ul>
     </div>
 
     {{template "modalNewApp.html"}}
     {{template "modalSeePass.html" .}}
+    {{template "modalHistory.html" .}}
 
 </body>
 

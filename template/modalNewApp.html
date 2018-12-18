@@ -1,8 +1,10 @@
 <div id="modalNewApp" class="w3-modal">
     <div class="w3-modal-content w3-card-4" style="max-width:400px">
-        <header class="w3-container w3-theme">
-            <h3>New Application</h3>
-            <span onclick="document.getElementById('modalNewApp').style.display='none'" class="w3-button w3-theme w3-display-topright"
+        <header class="w3-cell-row w3-theme">
+            <div class="w3-container w3-cell">
+                <h5>New Application </h5>
+            </div>
+            <span onclick="ViewOrHide(document.getElementById('modalNewApp'))" class="w3-button w3-hover-theme-light w3-large w3-cell"
                 title="Close Modal">&times;</span>
         </header>
         <form class="w3-container" method="post" action="/">
@@ -10,7 +12,7 @@
                 <input class="w3-input w3-border" type="text" placeholder="Enter app name" name="newAppName" required>
                 <input name="useSpecials" class="w3-check" type="checkbox" checked="checked"> Use
                 special characters
-                <button class="w3-button w3-block w3-theme w3-section w3-padding" type="submit">Add</button>
+                <button class="w3-button w3-hover-theme-light w3-block w3-theme w3-section" type="submit">Add</button>
             </div>
         </form>
     </div>
