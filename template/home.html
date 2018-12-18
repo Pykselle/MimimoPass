@@ -11,12 +11,14 @@
 <body>
 
     <header class="w3-container w3-theme w3-xxxlarge">
-        <div class="w3-cell w3-padding">
-            <i class="fas fa-hippo"></i>
-        </div>
-        <div class="w3-cell w3-padding">
-            Mimimo Pass
-        </div>
+        <a href="">
+            <div class="w3-cell w3-padding">
+                <i class="fas fa-hippo"></i>
+            </div>
+            <div class="w3-cell w3-padding">
+                Mimimo Pass
+            </div>
+        </a>
     </header>
 
     <div class="w3-container w3-margin-top">
@@ -49,9 +51,9 @@
                             </a>
                         </li>
                         <li class="w3-padding-small">
-                            <div class="w3-button w3-small">
+                            <a href="/?new={{$a.AppName}}" class="w3-button w3-small">
                                 <i class="fas fa-redo-alt w3-text-theme"></i> Generate new password
-                            </div>
+                            </a>
                         </li>
                         <li class="w3-padding-small">
                             <a href="/?history={{$a.AppName}}" class="w3-button w3-small">

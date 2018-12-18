@@ -13,7 +13,6 @@ import (
 type App struct {
 	AppName         string
 	UseSpecialChars bool
-	Increment       int
 	Versions        []time.Time
 }
 
@@ -90,13 +89,28 @@ func processFormDatas(r *http.Request, db *scribble.Driver) (*TmplVars, error) {
 		passphrase, isPassphrase := r.Form["passphrase"]
 		if isPassphrase {
 			var pass, ts string
-			for i, t := range templateDatas.AppHistoryToShow.Versions {
+			for i := len(templateDatas.AppHistoryToShow.Versions) - 1; i >= 0; i-- {
 				pass = computePassword(passphrase[0], templateDatas.AppHistoryToShow, i)
-				ts = t.Format("02 Jan 2006 15:04")
+				ts = templateDatas.AppHistoryToShow.Versions[i].Format("02 Jan 2006 15:04")
 				templateDatas.AppHistory = append(templateDatas.AppHistory, TmplPassHistory{TS: ts, Pass: pass})
 			}
 		}
 	}
+
+	// Check if there is a new password to generate
+	if app, isNewPassAsked := r.Form["new"]; isNewPassAsked {
+		templateDatas.SelectedApp = app[0]
+		templateDatas.AppHistoryToShow, err = getApp(db, app[0])
+		if err != nil {
+			return nil, fmt.Errorf("Error while retrieving app: %v", err)
+		}
+		templateDatas.AppHistoryToShow.Versions = append(templateDatas.AppHistoryToShow.Versions, time.Now())
+		err = storeApp(db, templateDatas.AppHistoryToShow)
+		if err != nil {
+			return nil, fmt.Errorf("Error while saving app: %v", err)
+		}
+	}
+
 	return &templateDatas, nil
 }
 
