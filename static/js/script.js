@@ -1,8 +1,12 @@
 function ViewOrHide(doc) {
     if (doc.className.indexOf("w3-show") == -1) {
-        doc.className += " w3-show";
+        if (doc.className.indexOf("w3-hide") == -1) {
+            doc.className += " w3-hide";
+        } else {
+            doc.className = doc.className.replace("w3-hide", "w3-show");
+        }
     } else {
-        doc.className = doc.className.replace(" w3-show", "");
+        doc.className = doc.className.replace("w3-show", "w3-hide");
     }
 }
 

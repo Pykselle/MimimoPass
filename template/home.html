@@ -41,22 +41,22 @@
                     <input name="app" value="{{$a.AppName}}" type="hidden" />
                     <ul class="w3-ul w3-hoverable w3-white">
                         <li class="w3-padding-small">
-                            <a href="/?password={{$a.AppName}}" class="w3-button w3-small">
+                            <a href="/?action=showpass&app={{$a.AppName}}" class="w3-button w3-small">
                                 <i class="fas fa-key w3-text-theme"></i> Show password
                             </a>
                         </li>
                         <li class="w3-padding-small">
-                            <a href="/?delete={{$a.AppName}}" class="w3-button w3-small">
+                            <a href="/?action=delete&app={{$a.AppName}}" class="w3-button w3-small">
                                 <i class="fas fa-trash-alt w3-text-theme"></i> Delete
                             </a>
                         </li>
                         <li class="w3-padding-small">
-                            <a href="/?new={{$a.AppName}}" class="w3-button w3-small">
+                            <a href="/?action=newpass&app={{$a.AppName}}" class="w3-button w3-small">
                                 <i class="fas fa-redo-alt w3-text-theme"></i> Generate new password
                             </a>
                         </li>
                         <li class="w3-padding-small">
-                            <a href="/?history={{$a.AppName}}" class="w3-button w3-small">
+                            <a href="/?action=history&app={{$a.AppName}}" class="w3-button w3-small">
                                 <i class="fas fa-history w3-text-theme"></i> History
                             </a>
                         </li>

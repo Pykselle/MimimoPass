@@ -40,35 +40,29 @@ func processFormDatas(r *http.Request, db *scribble.Driver) (templateDatas *Tmpl
 	if err = r.ParseForm(); err != nil {
 		return nil, fmt.Errorf("param parsing error: %v", err)
 	}
-	// Check if there's a password to show
-	if app, isPassAsked := r.Form["password"]; isPassAsked {
-		if err = processPasswordToShow(app[0], r, templateDatas, db); err != nil {
-			return nil, fmt.Errorf("Error while processing password to show: %v", err)
-		}
-	}
-	// Check if there is a new app to create
-	if newApp, isNewApp := r.Form["newAppName"]; isNewApp {
-		_, useSpecials := r.Form["useSpecials"]
-		if err = processAppToCreate(newApp[0], useSpecials, db); err != nil {
-			return nil, fmt.Errorf("Error while processing app to create: %v", err)
-		}
-	}
-	// Check if there is an app to delete
-	if appToDel, isAppToDel := r.Form["delete"]; isAppToDel {
-		if err = processAppToDelete(appToDel[0], db); err != nil {
-			return nil, fmt.Errorf("Error while processing app to delete: %v", err)
-		}
-	}
-	// Check if there is an app history to display
-	if historyApp, isHistoryToShow := r.Form["history"]; isHistoryToShow {
-		if err = processHistoryToShow(historyApp[0], r, templateDatas, db); err != nil {
-			return nil, fmt.Errorf("Error while processing history to display: %v", err)
-		}
-	}
-	// Check if there is a new password to generate
-	if app, isNewPassAsked := r.Form["new"]; isNewPassAsked {
-		if err = processNewPassword(app[0], templateDatas, db); err != nil {
-			return nil, fmt.Errorf("Error while processing new password: %v", err)
+	// Read action
+	action, isAction := r.Form["action"]
+	// Read App concerned
+	app, isApp := r.Form["app"]
+	if isApp {
+		templateDatas.SelectedApp = app[0]
+		if isAction {
+			switch action[0] {
+			case "delete":
+				err = processAppToDelete(app[0], db)
+			case "newpass":
+				err = processNewPassword(app[0], templateDatas, db)
+			case "history":
+				err = processHistoryToShow(app[0], r, templateDatas, db)
+			case "showpass":
+				err = processPasswordToShow(app[0], r, templateDatas, db)
+			case "newapp":
+				_, useSpecials := r.Form["useSpecials"]
+				err = processAppToCreate(app[0], useSpecials, db)
+			}
+			if err != nil {
+				return nil, fmt.Errorf("Error with action %v for app %v: %v", action, app, err)
+			}
 		}
 	}
 	return templateDatas, nil
@@ -99,9 +93,8 @@ func processAppToDelete(appName string, db *scribble.Driver) error {
 	return nil
 }
 
-// processPasswordToShow TODO
+// processPasswordToShow displays the password for the given app
 func processPasswordToShow(appName string, r *http.Request, tmplVars *TmplVars, db *scribble.Driver) (err error) {
-	tmplVars.SelectedApp = appName
 	tmplVars.AppPasswordToShow, err = getApp(db, appName)
 	if err != nil {
 		return fmt.Errorf("Error while retrieving app: %v", err)
@@ -114,9 +107,8 @@ func processPasswordToShow(appName string, r *http.Request, tmplVars *TmplVars, 
 	return nil
 }
 
-// processHistoryToShow TODO
+// processHistoryToShow displays the history for the given app
 func processHistoryToShow(appName string, r *http.Request, tmplVars *TmplVars, db *scribble.Driver) (err error) {
-	tmplVars.SelectedApp = appName
 	tmplVars.AppHistoryToShow, err = getApp(db, appName)
 	if err != nil {
 		return fmt.Errorf("Error while retrieving app: %v", err)
@@ -133,9 +125,8 @@ func processHistoryToShow(appName string, r *http.Request, tmplVars *TmplVars, d
 	return nil
 }
 
-// processNewPassword TODO
+// processNewPassword adds a version for the given app
 func processNewPassword(appName string, tmplVars *TmplVars, db *scribble.Driver) (err error) {
-	tmplVars.SelectedApp = appName
 	tmplVars.AppHistoryToShow, err = getApp(db, appName)
 	if err != nil {
 		return fmt.Errorf("Error while retrieving app: %v", err)

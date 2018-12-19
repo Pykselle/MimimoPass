@@ -1,7 +1,7 @@
 {{ if $.AppPasswordToShow.AppName }}
 <div id="modalSeePass" class="w3-modal w3-show">
     {{ else }}
-    <div id="modalSeePass" class="w3-modal">
+    <div id="modalSeePass" class="w3-modal w3-hide">
         {{ end }}
         <div class="w3-modal-content w3-card-4" style="max-width:400px">
             <header class="w3-cell-row w3-theme">
@@ -16,7 +16,8 @@
                     <input name="passphrase" class="w3-input w3-border" type="password" placeholder="Enter passphrase">
                     <button class="w3-button w3-hover-theme-light w3-block w3-theme w3-section" type="submit">Show
                         password</button>
-                    <input name="password" value="{{$.AppPasswordToShow.AppName}}" type="hidden" />
+                    <input name="action" value="showpass" type="hidden" />
+                    <input name="app" value="{{$.AppPasswordToShow.AppName}}" type="hidden" />
                     <div class="w3-cell-row">
                         <div class="w3-cell w3-cell-middle">
                             <input id="pass" value="{{$.Pass}}" type="text" class="w3-input w3-border" readonly />

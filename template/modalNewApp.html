@@ -1,4 +1,4 @@
-<div id="modalNewApp" class="w3-modal">
+<div id="modalNewApp" class="w3-modal w3-hide">
     <div class="w3-modal-content w3-card-4" style="max-width:400px">
         <header class="w3-cell-row w3-theme">
             <div class="w3-container w3-cell">
@@ -9,7 +9,8 @@
         </header>
         <form class="w3-container" method="post" action="/">
             <div class="w3-section">
-                <input class="w3-input w3-border" type="text" placeholder="Enter app name" name="newAppName" required>
+                <input class="w3-input w3-border" type="text" placeholder="Enter app name" name="app" required>
+                <input name="action" value="newapp" type="hidden" />
                 <input name="useSpecials" class="w3-check" type="checkbox" checked="checked"> Use
                 special characters
                 <button class="w3-button w3-hover-theme-light w3-block w3-theme w3-section" type="submit">Add</button>
