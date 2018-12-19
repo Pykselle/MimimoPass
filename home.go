@@ -14,14 +14,11 @@ const (
 
 // TmplVars contains vars to be used in the web template
 type TmplVars struct {
-	Pass              string
-	Apps              []App
-	SelectedApp       string
-	NewApp            string
-	AppToDelete       string
-	AppHistoryToShow  App
-	AppHistory        []TmplPassHistory
-	AppPasswordToShow App
+	Pass        string
+	Apps        []App
+	SelectedApp string
+	AppHistory  []TmplPassHistory
+	Action      string
 }
 
 //TmplPassHistory contains vars to be used for the password history

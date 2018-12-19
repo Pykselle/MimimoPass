@@ -1,4 +1,4 @@
-{{ if $.AppPasswordToShow.AppName }}
+{{ if eq "showpass" $.Action }}
 <div id="modalSeePass" class="w3-modal w3-show">
     {{ else }}
     <div id="modalSeePass" class="w3-modal w3-hide">
@@ -17,7 +17,7 @@
                     <button class="w3-button w3-hover-theme-light w3-block w3-theme w3-section" type="submit">Show
                         password</button>
                     <input name="action" value="showpass" type="hidden" />
-                    <input name="app" value="{{$.AppPasswordToShow.AppName}}" type="hidden" />
+                    <input name="app" value="{{$.SelectedApp}}" type="hidden" />
                     <div class="w3-cell-row">
                         <div class="w3-cell w3-cell-middle">
                             <input id="pass" value="{{$.Pass}}" type="text" class="w3-input w3-border" readonly />

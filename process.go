@@ -47,6 +47,7 @@ func processFormDatas(r *http.Request, db *scribble.Driver) (templateDatas *Tmpl
 	if isApp {
 		templateDatas.SelectedApp = app[0]
 		if isAction {
+			templateDatas.Action = action[0]
 			switch action[0] {
 			case "delete":
 				err = processAppToDelete(app[0], db)
@@ -94,31 +95,31 @@ func processAppToDelete(appName string, db *scribble.Driver) error {
 }
 
 // processPasswordToShow displays the password for the given app
-func processPasswordToShow(appName string, r *http.Request, tmplVars *TmplVars, db *scribble.Driver) (err error) {
-	tmplVars.AppPasswordToShow, err = getApp(db, appName)
+func processPasswordToShow(appName string, r *http.Request, tmplVars *TmplVars, db *scribble.Driver) error {
+	app, err := getApp(db, appName)
 	if err != nil {
 		return fmt.Errorf("Error while retrieving app: %v", err)
 	}
 	passphrase, isPassphrase := r.Form["passphrase"]
 	if isPassphrase {
-		inc := len(tmplVars.AppPasswordToShow.Versions) - 1
-		tmplVars.Pass = computePassword(passphrase[0], tmplVars.AppPasswordToShow, inc)
+		inc := len(app.Versions) - 1
+		tmplVars.Pass = computePassword(passphrase[0], app, inc)
 	}
 	return nil
 }
 
 // processHistoryToShow displays the history for the given app
-func processHistoryToShow(appName string, r *http.Request, tmplVars *TmplVars, db *scribble.Driver) (err error) {
-	tmplVars.AppHistoryToShow, err = getApp(db, appName)
+func processHistoryToShow(appName string, r *http.Request, tmplVars *TmplVars, db *scribble.Driver) error {
+	app, err := getApp(db, appName)
 	if err != nil {
 		return fmt.Errorf("Error while retrieving app: %v", err)
 	}
 	passphrase, isPassphrase := r.Form["passphrase"]
 	if isPassphrase {
 		var pass, ts string
-		for i := len(tmplVars.AppHistoryToShow.Versions) - 1; i >= 0; i-- {
-			pass = computePassword(passphrase[0], tmplVars.AppHistoryToShow, i)
-			ts = tmplVars.AppHistoryToShow.Versions[i].Format("02 Jan 2006 15:04")
+		for i := len(app.Versions) - 1; i >= 0; i-- {
+			pass = computePassword(passphrase[0], app, i)
+			ts = app.Versions[i].Format("02 Jan 2006 15:04")
 			tmplVars.AppHistory = append(tmplVars.AppHistory, TmplPassHistory{TS: ts, Pass: pass})
 		}
 	}
@@ -126,15 +127,16 @@ func processHistoryToShow(appName string, r *http.Request, tmplVars *TmplVars, d
 }
 
 // processNewPassword adds a version for the given app
-func processNewPassword(appName string, tmplVars *TmplVars, db *scribble.Driver) (err error) {
-	tmplVars.AppHistoryToShow, err = getApp(db, appName)
+func processNewPassword(appName string, tmplVars *TmplVars, db *scribble.Driver) error {
+	app, err := getApp(db, appName)
 	if err != nil {
 		return fmt.Errorf("Error while retrieving app: %v", err)
 	}
-	tmplVars.AppHistoryToShow.Versions = append(tmplVars.AppHistoryToShow.Versions, time.Now())
-	err = storeApp(db, tmplVars.AppHistoryToShow)
+	app.Versions = append(app.Versions, time.Now())
+	err = storeApp(db, app)
 	if err != nil {
 		return fmt.Errorf("Error while saving app: %v", err)
 	}
+	tmplVars.Action = "history"
 	return nil
 }

@@ -1,4 +1,4 @@
-{{ if $.AppHistoryToShow.AppName }}
+{{ if eq "history" $.Action }}
 <div id="modalHistory" class="w3-modal w3-show">
     {{ else }}
     <div id="modalHistory" class="w3-modal w3-hide">
@@ -17,7 +17,7 @@
                     <button class="w3-button w3-hover-theme-light w3-block w3-theme w3-section" type="submit">Show
                         history</button>
                     <input name="action" value="history" type="hidden" />
-                    <input name="app" value="{{$.AppHistoryToShow.AppName}}" type="hidden" />
+                    <input name="app" value="{{$.SelectedApp}}" type="hidden" />
                 </div>
             </form>
             {{ if $.AppHistory }}
