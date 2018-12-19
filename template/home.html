@@ -46,7 +46,7 @@
                             </a>
                         </li>
                         <li class="w3-padding-small">
-                            <a href="/?action=delete&app={{$a.AppName}}" class="w3-button w3-small">
+                            <a href="/?action=askdelete&app={{$a.AppName}}" class="w3-button w3-small">
                                 <i class="fas fa-trash-alt w3-text-theme"></i> Delete
                             </a>
                         </li>
@@ -70,6 +70,7 @@
     {{template "modalNewApp.html"}}
     {{template "modalSeePass.html" .}}
     {{template "modalHistory.html" .}}
+    {{template "modalConfDelete.html" .}}
 
 </body>
 

@@ -40,6 +40,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		tmplPath+"/modalNewApp.html",
 		tmplPath+"/modalSeePass.html",
 		tmplPath+"/modalHistory.html",
+		tmplPath+"/modalConfDelete.html",
 	)
 	if err != nil {
 		log.Print("template parsing error: ", err)
