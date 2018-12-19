@@ -66,7 +66,7 @@ func computePassword(passphrase string, app App, increment int) (pass string) {
 // buildCharTable returns the table of characters to use for the password
 // The password being build with a modulo on the table, some characters may be
 // repeated more than others
-// We don't want a predictible repetition, hence the table is randomized with a
+// We don't want a predictable repetition, hence the table is randomized with a
 // seed depending on the length of the passphrase + app name
 func buildCharTable(passphrase string, app App) []rune {
 	var tmpCharTable []rune
