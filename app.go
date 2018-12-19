@@ -3,9 +3,17 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/nanobox-io/golang-scribble"
 )
+
+// App represents the stored application
+type App struct {
+	AppName         string
+	UseSpecialChars bool
+	Versions        []time.Time
+}
 
 func storeApp(db *scribble.Driver, a App) error {
 	if err := db.Write("app", a.AppName, a); err != nil {
