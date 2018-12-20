@@ -22,10 +22,8 @@ func process(r *http.Request) (*TmplVars, error) {
 		return nil, fmt.Errorf("Error with scribble driver : %v", err)
 	}
 	// Process datas sent by forms
-	templateDatas, err := processFormDatas(r, db)
-	if err != nil {
-		return nil, fmt.Errorf("Error while processing Form datas: %v", err)
-	}
+	templateDatas := processFormDatas(r, db)
+
 	// Get all apps to be displayed
 	templateDatas.Apps, err = getApps(db)
 	if err != nil {
@@ -35,10 +33,12 @@ func process(r *http.Request) (*TmplVars, error) {
 }
 
 // processFormDatas processes all datas sent by forms
-func processFormDatas(r *http.Request, db *scribble.Driver) (templateDatas *TmplVars, err error) {
+func processFormDatas(r *http.Request, db *scribble.Driver) (templateDatas *TmplVars) {
 	templateDatas = &TmplVars{}
+	var err error
 	if err = r.ParseForm(); err != nil {
-		return nil, fmt.Errorf("param parsing error: %v", err)
+		templateDatas.Action = "error"
+		templateDatas.Error = fmt.Sprintf("param parsing error: %v", err)
 	}
 	// Read action
 	action, isAction := r.Form["action"]
@@ -62,11 +62,12 @@ func processFormDatas(r *http.Request, db *scribble.Driver) (templateDatas *Tmpl
 				err = processAppToCreate(app[0], useSpecials, db)
 			}
 			if err != nil {
-				return nil, fmt.Errorf("Error with action %v for app %v: %v", action, app, err)
+				templateDatas.Action = "error"
+				templateDatas.Error = fmt.Sprintf("Error with action %v for app %v: %v", action, app, err)
 			}
 		}
 	}
-	return templateDatas, nil
+	return templateDatas
 }
 
 // processAppToCreate creates the given app
@@ -80,7 +81,7 @@ func processAppToCreate(appName string, useSpecialChars bool, db *scribble.Drive
 		},
 	)
 	if err != nil {
-		return fmt.Errorf("Error while adding new app : %v", err)
+		return err
 	}
 	return nil
 }
@@ -89,7 +90,7 @@ func processAppToCreate(appName string, useSpecialChars bool, db *scribble.Drive
 func processAppToDelete(appName string, db *scribble.Driver) error {
 	err := deleteApp(db, App{AppName: appName})
 	if err != nil {
-		return fmt.Errorf("Error while deleting app : %v", err)
+		return err
 	}
 	return nil
 }

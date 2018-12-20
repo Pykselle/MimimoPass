@@ -19,6 +19,7 @@ type TmplVars struct {
 	SelectedApp string
 	AppHistory  []TmplPassHistory
 	Action      string
+	Error       string
 }
 
 //TmplPassHistory contains vars to be used for the password history
@@ -41,6 +42,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		tmplPath+"/modalSeePass.html",
 		tmplPath+"/modalHistory.html",
 		tmplPath+"/modalConfDelete.html",
+		tmplPath+"/modalError.html",
 	)
 	if err != nil {
 		log.Print("template parsing error: ", err)

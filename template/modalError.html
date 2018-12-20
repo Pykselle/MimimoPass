@@ -1,0 +1,31 @@
+{{ if eq "error" $.Action }}
+<div id="modalError" class="w3-modal w3-show">
+    {{ else }}
+    <div id="modalError" class="w3-modal w3-hide">
+        {{ end }}
+        <div class="w3-modal-content w3-card-4" style="max-width:400px">
+            <header class="w3-theme">
+                <div class="w3-cell-row">
+                    <div class="w3-cell w3-center">
+                        <i class="fas fa-dizzy w3-large"></i>
+                    </div>
+                    <div class="w3-cell">
+                        <h5>Error</h5>
+                    </div>
+                    <span onclick="ViewOrHide(document.getElementById('modalError'))" class="w3-button w3-hover-theme-light w3-large w3-cell"
+                        title="Close Modal">&times;</span>
+                </div>
+
+            </header>
+            <form class="w3-container" method="post" action="/">
+                <div class="w3-section">
+                    <i class="fas fa-exclamation-triangle w3-text-theme "></i>
+                    Following error has occurred :<br>
+                    <div class="w3-panel  w3-leftbar w3-theme-light w3-border-theme">
+                        {{$.Error}}
+                    </div>
+                    <button class="w3-button w3-hover-theme-light w3-block w3-theme w3-section" type="button" onclick="ViewOrHide(document.getElementById('modalError'))">OK</button>
+                </div>
+            </form>
+        </div>
+    </div>
