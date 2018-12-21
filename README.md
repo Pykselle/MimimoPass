@@ -31,9 +31,9 @@ Then go to http://localhost:8080/
 
 ###  First use
 
-If you launch it for the 1st time, you will see this :
+If you launch it for the 1st time, you will see this :  
 
-![There's nothing here... Oh wait ! Nevermind, just a tumbleweed](./screenshots/empty.png)
+![First launch](./screenshots/empty.png "There's nothing here... Oh wait ! Nevermind, just a tumbleweed")
 
 * Click on "New app" to add a new application ([Go here for more informations](#Add-a-new-application))
 
@@ -58,13 +58,13 @@ And *Tadaamm* ! You should see all your applications !
 
 You can add a new application by clicking on "+ New app"
 
-Enter the name of the application (Gmail, Facebook, Twitter, YouPorn... (No one's judging you (or maybe a little bit)))
+Enter the name of the application (Gmail, Facebook, Twitter...
 
-![Quite obvious here I hope](./screenshots/modalNewApp.png)
+![New app modal](./screenshots/modalNewApp.png "Quite obvious here I hope")
 
 Congratulations ! You've just added your first application !
 
-![Yay !](./screenshots/oneAppAdded.png)
+![One application added](./screenshots/oneAppAdded.png "Yay !")
 
 ### Get the password of an application
 
@@ -73,7 +73,7 @@ Congratulations ! You've just added your first application !
 * Enter your master password
 * Click on "Show password"
 
-![No, this is not my real password](./screenshots/showPass.png)
+![show password](./screenshots/showPass.png "No, this is not my real password")
 
 The password is displayed, and copied to the clipboard if you click on the clickboard icon
 
@@ -102,7 +102,7 @@ The history is automatically opened, allowing you to see the old and the new pas
 
 (As explained in the introduction, MimimoPass does not store the passwords but is able to re-generate them)
 
-![Again, not my real password :)](./screenshots/history.png)
+![history](./screenshots/history.png "Again, not my real password :)")
 
 
 
