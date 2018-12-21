@@ -59,7 +59,8 @@ func processFormDatas(r *http.Request, db *scribble.Driver) (templateDatas *Tmpl
 				err = processPasswordToShow(app[0], r, templateDatas, db)
 			case "newapp":
 				_, useSpecials := r.Form["useSpecials"]
-				err = processAppToCreate(app[0], useSpecials, db)
+				login, _ := r.Form["login"]
+				err = processAppToCreate(app[0], login[0], useSpecials, db)
 			}
 			if err != nil {
 				templateDatas.Action = "error"
@@ -71,7 +72,7 @@ func processFormDatas(r *http.Request, db *scribble.Driver) (templateDatas *Tmpl
 }
 
 // processAppToCreate creates the given app
-func processAppToCreate(appName string, useSpecialChars bool, db *scribble.Driver) error {
+func processAppToCreate(appName string, login string, useSpecialChars bool, db *scribble.Driver) error {
 	if app, _ := getApp(db, appName); app != nil {
 		return fmt.Errorf("App %q already exists", appName)
 	}
@@ -79,6 +80,7 @@ func processAppToCreate(appName string, useSpecialChars bool, db *scribble.Drive
 		db,
 		&App{
 			AppName:         appName,
+			Login:           login,
 			UseSpecialChars: useSpecialChars,
 			Versions:        []time.Time{time.Now()},
 		},

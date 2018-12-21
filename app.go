@@ -11,6 +11,7 @@ import (
 // App represents the stored application
 type App struct {
 	AppName         string
+	Login           string
 	UseSpecialChars bool
 	Versions        []time.Time
 }

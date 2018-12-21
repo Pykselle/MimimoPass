@@ -38,6 +38,9 @@
             <li class="w3-hide" id="detail_{{$a.AppName}}">
                 {{ end }}
                 <form id="form_{{$a.AppName}}" method="post" action="/">
+                    {{ if $a.Login}}
+                    <p>Login: {{$a.Login}}</p>
+                    {{ end }}
                     <input name="app" value="{{$a.AppName}}" type="hidden" />
                     <ul class="w3-ul w3-hoverable w3-white">
                         <li class="w3-padding-small">
