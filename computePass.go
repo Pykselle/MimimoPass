@@ -18,7 +18,7 @@ const (
 
 // compute returns the password corresponding to the passphrase and the app
 // This password is at least 10 chars long
-func computePassword(passphrase string, app App, increment int) (pass string) {
+func computePassword(passphrase string, app *App, increment int) (pass string) {
 
 	charTable := buildCharTable(passphrase, app)
 	hash := buildHash(passphrase, app, increment)
@@ -68,7 +68,7 @@ func computePassword(passphrase string, app App, increment int) (pass string) {
 // repeated more than others
 // We don't want a predictable repetition, hence the table is randomized with a
 // seed depending on the length of the passphrase + app name
-func buildCharTable(passphrase string, app App) []rune {
+func buildCharTable(passphrase string, app *App) []rune {
 	var tmpCharTable []rune
 	tmpCharTable = append(tmpCharTable, lowCaseCharsTable...)
 	tmpCharTable = append(tmpCharTable, upperCaseCharsTable...)
@@ -91,7 +91,7 @@ func shuffleCharTable(vals []rune, r *rand.Rand) []rune {
 
 // buildHash returns a hash built from the passphrase and the app
 
-func buildHash(passphrase string, app App, increment int) (hash [32]byte) {
+func buildHash(passphrase string, app *App, increment int) (hash [32]byte) {
 	cryptedPassPhrase := sha256.Sum256([]byte(passphrase))
 	cryptedApp := sha256.Sum256([]byte(app.AppName + fmt.Sprint(increment)))
 	// Get an hash from previous hashes

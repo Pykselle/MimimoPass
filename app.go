@@ -15,7 +15,7 @@ type App struct {
 	Versions        []time.Time
 }
 
-func storeApp(db *scribble.Driver, a App) error {
+func storeApp(db *scribble.Driver, a *App) error {
 	if err := db.Write("app", a.AppName, a); err != nil {
 		return err
 	}
@@ -38,10 +38,10 @@ func getApps(db *scribble.Driver) ([]App, error) {
 	return apps, nil
 }
 
-func getApp(db *scribble.Driver, appName string) (App, error) {
-	app := App{}
+func getApp(db *scribble.Driver, appName string) (*App, error) {
+	app := &App{}
 	if err := db.Read("app", appName, &app); err != nil {
-		return app, fmt.Errorf("Error while getting app : %v", err)
+		return nil, fmt.Errorf("Error while getting app : %v", err)
 	}
 	return app, nil
 }

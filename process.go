@@ -72,9 +72,12 @@ func processFormDatas(r *http.Request, db *scribble.Driver) (templateDatas *Tmpl
 
 // processAppToCreate creates the given app
 func processAppToCreate(appName string, useSpecialChars bool, db *scribble.Driver) error {
+	if app, _ := getApp(db, appName); app != nil {
+		return fmt.Errorf("App %q already exists", appName)
+	}
 	err := storeApp(
 		db,
-		App{
+		&App{
 			AppName:         appName,
 			UseSpecialChars: useSpecialChars,
 			Versions:        []time.Time{time.Now()},
